@@ -1,6 +1,15 @@
 fastapi
 uvicorn
-jinja2
 python-multipart
-ultralytics
 pyngrok
+nest_asyncio
+ultralytics
+opencv-python-headless
+torch
+torchvision
+pillow
+numpy
+
+# опционально, для Jupyter
+ipykernel
+matplotlib
