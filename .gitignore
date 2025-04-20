@@ -6,8 +6,4 @@ static/*
 *.jpeg
 *.png
 *.zip
-*.pt
-__pycache__/
-static/*
-!static/.gitkeep
 kaggle.json
