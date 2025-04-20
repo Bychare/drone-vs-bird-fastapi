@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from model.yolo_predict import load_model, predict_image
 from utils.image_utils import save_uploaded_file
@@ -8,22 +8,32 @@ import nest_asyncio
 from pyngrok import ngrok, conf
 import uuid
 import os
+import getpass
 
+# Загрузка модели
 app = FastAPI()
 model = load_model()
 class_map = model.model.names
 
+# Создание папки для статических файлов (изображений)
 os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Главная страница
 @app.get("/", response_class=HTMLResponse)
 async def home():
     return """
     <html><head><title>Drone vs Bird</title></head>
-    <body><h1>Upload Image</h1><form action="/predict/" enctype="multipart/form-data" method="post">
-    <input name="file" type="file" accept="image/*"><input type="submit" value="Predict"></form></body></html>
+    <body>
+    <h1>Upload Image</h1>
+    <form action="/predict/" enctype="multipart/form-data" method="post">
+        <input name="file" type="file" accept="image/*">
+        <input type="submit" value="Predict">
+    </form>
+    </body></html>
     """
 
+# Обработка загрузки и предсказания
 @app.post("/predict/", response_class=HTMLResponse)
 async def predict(file: UploadFile = File(...)):
     file_id = str(uuid.uuid4())
@@ -36,9 +46,18 @@ async def predict(file: UploadFile = File(...)):
     <p><a href="/">← Back</a></p></body></html>
     """
 
-# Ngrok setup
-conf.get_default().auth_token = "YOUR_NGROK_TOKEN"
-nest_asyncio.apply()
-public_url = ngrok.connect(8000)
-print("Public URL:", public_url)
-uvicorn.run(app, port=8000)
+# Запуск FastAPI + Ngrok
+if __name__ == "__main__":
+    # Запрос токена через командную строку
+    token = getpass.getpass("Enter your ngrok authtoken: ")
+    conf.get_default().auth_token = token
+
+    # Поддержка асинхронности
+    nest_asyncio.apply()
+
+    # Запуск туннеля
+    public_url = ngrok.connect(8000)
+    print("Public URL:", public_url)
+
+    # Запуск сервера
+    uvicorn.run(app, port=8000)
