@@ -1,0 +1,14 @@
+*.pt
+__pycache__/
+static/*
+!static/.gitkeep
+*.ipynb
+*.jpg
+*.jpeg
+*.png
+*.zip
+*.pt
+__pycache__/
+static/*
+!static/.gitkeep
+*.ipynb
