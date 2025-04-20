@@ -2,7 +2,6 @@
 __pycache__/
 static/*
 !static/.gitkeep
-*.ipynb
 *.jpg
 *.jpeg
 *.png
@@ -11,4 +10,4 @@ static/*
 __pycache__/
 static/*
 !static/.gitkeep
-*.ipynb
+kaggle.json
