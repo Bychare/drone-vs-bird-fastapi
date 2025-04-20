@@ -50,9 +50,10 @@ async def predict(file: UploadFile = File(...)):
 
 # Запуск FastAPI + Ngrok
 if __name__ == "__main__":
-    # Запрос токена через командную строку
-    token = getpass.getpass("Enter your ngrok authtoken: ")
-    conf.get_default().auth_token = token
+    # Проверка наличия токена и запрос токена только если он не установлен
+    if not conf.get_default().auth_token:
+        token = getpass.getpass("Enter your ngrok authtoken: ")
+        conf.get_default().auth_token = token
 
     # Поддержка асинхронности
     nest_asyncio.apply()
