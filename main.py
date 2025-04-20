@@ -10,16 +10,15 @@ import uuid
 import os
 import getpass
 
-# Загрузка модели
-app = FastAPI()
+# Initialize FastAPI app and load model\ app = FastAPI()
 model = load_model()
 class_map = model.model.names
 
-# Создание папки для статических файлов (изображений)
+# Ensure static directory exists and mount it for serving images
 os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Главная страница
+# Home page route with upload form
 @app.get("/", response_class=HTMLResponse)
 async def home():
     return """
@@ -33,31 +32,38 @@ async def home():
     </body></html>
     """
 
-# Обработка загрузки и предсказания
+# Prediction endpoint: saves the file, runs model, shows result
 @app.post("/predict/", response_class=HTMLResponse)
 async def predict(file: UploadFile = File(...)):
+    # Generate a unique filename
     file_id = str(uuid.uuid4())
+
+    # Save the uploaded file to static folder
     input_path = save_uploaded_file(file, file_id)
+
+    # Run prediction and get output path
     output_path = predict_image(model, input_path)
 
+    # Return HTML page with result image
     return f"""
     <html><body><h2>Prediction</h2>
     <img src="/{output_path}" style="max-width: 80%;">
-    <p><a href="/">← Back</a></p></body></html>
+    <p><a href="/">← Back</a></p>
+    </body></html>
     """
 
-# Запуск FastAPI + Ngrok
+# Main entrypoint: setup ngrok and run server
 if __name__ == "__main__":
-    # Запрос токена через командную строку
+    # Securely prompt user for ngrok auth token (not stored in code)
     token = getpass.getpass("Enter your ngrok authtoken: ")
     conf.get_default().auth_token = token
 
-    # Поддержка асинхронности
+    # Allow nested asyncio event loop for ngrok
     nest_asyncio.apply()
 
-    # Запуск туннеля
+    # Open public tunnel to local port
     public_url = ngrok.connect(8000)
     print("Public URL:", public_url)
 
-    # Запуск сервера
+    # Run Uvicorn ASGI server
     uvicorn.run(app, port=8000)
