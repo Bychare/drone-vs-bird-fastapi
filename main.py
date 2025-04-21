@@ -10,6 +10,7 @@ import uuid
 import os
 import getpass
 
+
 # Создание экземпляра FastAPI
 app = FastAPI()
 
@@ -50,17 +51,25 @@ async def predict(file: UploadFile = File(...)):
 
 # Запуск FastAPI + Ngrok
 if __name__ == "__main__":
-    # Проверка наличия токена и запрос токена только если он не установлен
-    if not conf.get_default().auth_token:
-        token = getpass.getpass("Enter your ngrok authtoken: ")
-        conf.get_default().auth_token = token
-
-    # Поддержка асинхронности
+    # Способ 1: Ввод токена через input() (более надежно, чем getpass)
+    ngrok_token = input("Enter your ngrok authtoken: ").strip()
+    
+    # Убедитесь, что токен не пустой и применяется правильно
+    if not ngrok_token:
+        raise ValueError("Ngrok authtoken cannot be empty!")
+    
+    # Установка токена (вариант 1)
+    conf.get_default().auth_token = ngrok_token
+    
+    # Альтернатива (вариант 2) - явно передать токен в connect()
+    # public_url = ngrok.connect(8000, auth_token=ngrok_token)
+    
     nest_asyncio.apply()
-
-    # Запуск туннеля
-    public_url = ngrok.connect(8000)
-    print("Public URL:", public_url)
-
-    # Запуск сервера
-    uvicorn.run(app, port=8000)
+    
+    try:
+        public_url = ngrok.connect(8000)
+        print("Public URL:", public_url)
+        uvicorn.run(app, port=8000)
+    except Exception as e:
+        print(f"Ngrok error: {e}")
+        print("Check your authtoken at: https://dashboard.ngrok.com/get-started/your-authtoken")
