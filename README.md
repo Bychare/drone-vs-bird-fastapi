@@ -9,6 +9,7 @@ This project uses a YOLOv8 model to classify and localize drones or birds in ima
 - Ngrok tunnel for public access
 - Animated GIF visualization of detections
 
+```
 drone-vs-bird-fastapi/
 ├── main.py                          # Основной файл FastAPI + ngrok
 ├── model/
@@ -20,6 +21,7 @@ drone-vs-bird-fastapi/
 │   └── drone_vs_bird.ipynb         # Оригинальный ноутбук (перенос вручную)
 ├── requirements.txt
 └── README.md
+```
 
 Run the FastAPI server:
   uvicorn main.main:app --reload
