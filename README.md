@@ -23,8 +23,33 @@ drone-vs-bird-fastapi/
 └── README.md
 ```
 
-Run the FastAPI server:
-  uvicorn main.main:app --reload
+## Setup and Running Instructions  
 
-Start ngrok tunnel:
-  ngrok http 8000
+1. **Clone the repository (if needed) or navigate to the project**  
+   ```bash
+   git clone https://github.com/Bychare/drone-vs-bird-fastapi.git  
+   cd drone-vs-bird-fastapi  
+   ```  
+
+2. **Install dependencies**  
+   ```bash
+   pip install -r requirements.txt  
+   ```  
+
+3. **Run the server**  
+   ```bash
+   python main.py  
+   ```  
+   - If the Ngrok token is not saved yet, the script will prompt:  
+     ```
+     Enter your ngrok authtoken:
+     ```  
+
+4. **Access the public URL**  
+   - Open in your browser:  
+     - `http://127.0.0.1:8000/`  
+     - or `http://localhost:8000`  
+   - Upload an image on the main page  
+   - Verify that:  
+     - Predictions are displayed correctly  
+     - Bounding boxes are drawn  
